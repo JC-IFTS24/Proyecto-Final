@@ -1,0 +1,79 @@
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import config from './config/env.js';
+import database from './config/database.js';
+import { errorHandler, notFoundHandler } from './middlewares/error.middleware.js';
+
+// Importar rutas
+import authRoutes from './routes/auth.routes.js';
+import usuarioRoutes from './routes/usuario.routes.js';
+import refugioRoutes from './routes/refugio.routes.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+
+// ============================================
+// MIDDLEWARES GLOBALES
+// ============================================
+
+// CORS
+app.use(cors({
+  origin: config.cors.origin,
+  credentials: true
+}));
+
+// Body parser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Servir archivos estáticos (uploads)
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Logger simple
+if (config.nodeEnv === 'development') {
+  app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+    next();
+  });
+}
+
+// ============================================
+// CONEXIÓN A BASE DE DATOS
+// ============================================
+database.connect();
+
+// ============================================
+// RUTAS
+// ============================================
+
+// Ruta de health check
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    environment: config.nodeEnv,
+    database: 'Supabase'
+  });
+});
+
+// API Routes
+app.use('/auth', authRoutes);
+app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/refugios', refugioRoutes);
+
+// ============================================
+// MANEJO DE ERRORES
+// ============================================
+
+// Ruta no encontrada (404)
+app.use(notFoundHandler);
+
+// Error handler global
+app.use(errorHandler);
+
+export default app;
