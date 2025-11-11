@@ -21,6 +21,13 @@ class UsuarioService {
     return usuarioSinPassword;
   }
 
+  async getUsuarioByEmail(email) {
+    const usuario = await usuarioModel.findByEmail(email);
+    // Remover password
+    const { password, ...usuarioSinPassword } = usuario;
+    return usuarioSinPassword;
+  }
+
   async createUsuario(usuarioData) {
     // Verificar si el email ya existe
     const existingUser = await usuarioModel.findByEmail(usuarioData.email);

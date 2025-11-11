@@ -11,6 +11,7 @@ router.post('/create', usuarioController.create);
 // Rutas protegidas
 router.get('/', verifyToken, usuarioController.getAll);
 router.get('/:id', verifyToken, usuarioController.getById);
+router.get('/email/:email', verifyToken, usuarioController.getByEmail);
 router.put('/:id', verifyToken, usuarioController.update);
 router.delete('/:id', verifyToken, usuarioController.delete);
 

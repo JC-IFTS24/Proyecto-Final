@@ -22,6 +22,16 @@ class UsuarioController {
     }
   }
 
+  async getByEmail(req, res, next) {
+    try {
+      const { email } = req.params;
+      const usuario = await usuarioService.getUsuarioByEmail(email);
+      return ApiResponse.success(res, usuario, 'Usuario obtenido exitosamente');
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async create(req, res, next) {
     try {
       const usuario = await usuarioService.createUsuario(req.body);
