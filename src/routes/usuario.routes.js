@@ -12,7 +12,6 @@ router.post('/create', usuarioController.create);
 router.get('/', verifyToken, usuarioController.getAll);
 router.get('/:id', verifyToken, usuarioController.getById);
 router.put('/:id', verifyToken, isOwnerOrAdmin(), usuarioController.update);
-router.delete('/:id', verifyToken, isAdmin, usuarioController.delete);
 
 // Subida de imagen (solo el dueño o admin)
 router.post('/:id/upload', verifyToken, isOwnerOrAdmin(), upload.single('image'), usuarioController.uploadImage);
@@ -20,5 +19,6 @@ router.post('/:id/upload', verifyToken, isOwnerOrAdmin(), upload.single('image')
 // Rutas solo para administradores
 router.put('/:id/role', verifyToken, isAdmin, usuarioController.changeRole);
 router.get('/stats/general', verifyToken, isAdmin, usuarioController.getStats);
+router.delete('/:id', verifyToken, isAdmin, usuarioController.delete);
 
 export default router;
