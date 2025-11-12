@@ -4,9 +4,11 @@ import { ApiResponse } from '../utils/responses.js';
 
 const router = express.Router();
 
-// Login
+/**
+ * POST /auth/login
+ * Iniciar sesión
+ */
 router.post('/login', async (req, res, next) => {
-  console.log("📩 Llamada recibida en /auth/login");
   try {
     const { email, password } = req.body;
     const result = await usuarioService.login(email, password);
@@ -16,9 +18,11 @@ router.post('/login', async (req, res, next) => {
   }
 });
 
-// Register
+/**
+ * POST /auth/register
+ * Registrar nuevo usuario
+ */
 router.post('/register', async (req, res, next) => {
-  console.log("📩 Llamada recibida en /auth/register");
   try {
     const usuario = await usuarioService.register(req.body);
     return ApiResponse.created(res, usuario, 'Usuario registrado exitosamente');

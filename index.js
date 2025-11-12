@@ -7,20 +7,25 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Crear directorio uploads si no existe
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
-  console.log('📁 Directorio uploads creado');
-}
+// Crear directorios necesarios si no existen
+const dirs = ['uploads', 'public'];
+dirs.forEach(dir => {
+  const dirPath = path.join(__dirname, dir);
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+    console.log(`📁 Directorio ${dir}/ creado`);
+  }
+});
 
+// Iniciar servidor
 const server = app.listen(config.port, () => {
   console.log('===========================================');
   console.log('🚀 Servidor de Refugios de Mascotas');
   console.log('===========================================');
   console.log(`📦 Entorno: ${config.nodeEnv}`);
-  console.log(`🌐 URL: http://localhost:${config.port}`);
+  console.log(`🌐 API: http://localhost:${config.port}`);
   console.log(`💚 Health: http://localhost:${config.port}/health`);
+  console.log(`👨‍💼 Admin: http://localhost:${config.port}/admin/admin.html`);
   console.log(`🗄️  Base de datos: Supabase`);
   console.log('===========================================');
   console.log('📋 Endpoints disponibles:');
@@ -31,9 +36,13 @@ const server = app.listen(config.port, () => {
   console.log('   GET    /api/refugios');
   console.log('   POST   /api/refugios/create');
   console.log('===========================================');
+  console.log('🔑 Usuario Admin por defecto:');
+  console.log('   Email: admin@refugios.com');
+  console.log('   Password: admin123');
+  console.log('===========================================');
 });
 
-// Manejo de errores no capturados
+// Manejo de cierre graceful
 process.on('unhandledRejection', (err) => {
   console.error('❌ UNHANDLED REJECTION! Cerrando servidor...');
   console.error(err);

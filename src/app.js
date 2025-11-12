@@ -12,6 +12,7 @@ import authRoutes from './routes/auth.routes.js';
 import usuarioRoutes from './routes/usuario.routes.js';
 import refugioRoutes from './routes/refugio.routes.js';
 
+// Obtener __dirname en ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -21,20 +22,21 @@ const app = express();
 // MIDDLEWARES GLOBALES
 // ============================================
 
-// CORS
+// CORS - Permitir peticiones desde otros dominios
 app.use(cors({
   origin: config.cors.origin,
   credentials: true
 }));
 
-// Body parser
+// Body parser - Parsear JSON y URL encoded
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Servir archivos estáticos (uploads)
+// Servir archivos estáticos
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/admin', express.static(path.join(__dirname, '../public')));
 
-// Logger simple
+// Logger simple (solo en desarrollo)
 if (config.nodeEnv === 'development') {
   app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
@@ -51,7 +53,22 @@ database.connect();
 // RUTAS
 // ============================================
 
-// Ruta de health check
+// Ruta principal
+app.get('/', (req, res) => {
+  res.json({
+    message: 'API de Refugios de Mascotas',
+    version: '1.0.0',
+    endpoints: {
+      auth: '/auth',
+      usuarios: '/api/usuarios',
+      refugios: '/api/refugios',
+      admin: '/admin/admin.html',
+      health: '/health'
+    }
+  });
+});
+
+// Health check
 app.get('/health', (req, res) => {
   res.json({
     status: 'OK',
